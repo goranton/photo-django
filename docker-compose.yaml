@@ -1,0 +1,26 @@
+services:
+  database:
+    image: postgres
+    env_file:
+      - docker/database.env
+    volumes:
+      - ./docker/postgresql:/var/lib/postgresql/data:rw
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U local" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  server:
+    build: .
+    command: python3 backend/manage.py runserver 0.0.0.0:8000
+    expose:
+      - 8000
+    ports:
+      - 8765:8000
+    env_file:
+      - ./docker/database.env
+    volumes:
+      - .:/src
+    depends_on:
+      database:
+        condition: service_healthy
