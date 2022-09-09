@@ -20,7 +20,10 @@ services:
     env_file:
       - ./docker/database.env
     volumes:
-      - .:/src
+      - database:/src
     depends_on:
       database:
         condition: service_healthy
+
+volumes:
+  database:
